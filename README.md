@@ -21,8 +21,8 @@ steps:
 Params:
 
 - name (required) - name of the ECR.
-- permissionspolicy (optional) - path in local repository to the permissions policy file.
-- lifecyclepolicy (optional) - path in local repository to the lifecycle policy file.
+- permissions-policy (optional) - path in local repository to the permissions policy file.
+- lifecycle-policy (optional) - path in local repository to the lifecycle policy file.
 
 # License
 
