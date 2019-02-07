@@ -9,4 +9,4 @@ configuration:
       type: string
     policy:
       type: string
-  required: []
+  required: ["name"]
