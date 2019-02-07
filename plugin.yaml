@@ -1,5 +1,5 @@
-name: ecr-management
-description: Plugin managing AWS ECR
+name: create-ecr
+description: Plugin managing creation of AWS ECR
 author: https://github.com/seek-oss
 requirements:
   - docker
