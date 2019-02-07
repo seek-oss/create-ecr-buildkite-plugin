@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eo pipefail
+set -euo pipefail
 
 basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 
@@ -31,16 +31,17 @@ upsert_ecr() {
     --repository-name "${repository_name}" \
     --lifecycle-policy-text "file://$basedir/policies/ecr-lifecycle-policy.json"
 
-	# policy_file="${BUILDKITE_PLUGIN_CREATE_ECR_POLICY}"
-	# echo "Policy file: ${policy_file}"
-  if [ -z ${BUILDKITE_PLUGIN_CREATE_ECR_POLICY+x} ]; then
+	policy_file="${BUILDKITE_PLUGIN_CREATE_ECR_POLICY:-''}"
+	echo "Policy file: ${policy_file}"
+  if [ -z ${policy_file} ]; then
 		echo 'Setting ECR permissoins'
     aws ecr set-repository-policy \
       --repository-name "${repository_name}" \
-      --policy-text "${BUILDKITE_PLUGIN_CREATE_ECR_POLICY}"
+      --policy-text "file://${policy_file}"
   fi
 }
 
+env
 $(aws ecr get-login --no-include-email)
 # FIX ME
 default_repository_name="build-cache/${BUILDKITE_ORGANIZATION_SLUG}/${BUILDKITE_PIPELINE_SLUG}"
