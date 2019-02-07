@@ -26,11 +26,6 @@ upsert_ecr() {
     aws ecr create-repository --repository-name "${repository_name}"
   fi
 
-	echo 'Setting ECR Lifecycle policy'
-  aws ecr put-lifecycle-policy \
-    --repository-name "${repository_name}" \
-    --lifecycle-policy-text "file://$basedir/policies/ecr-lifecycle-policy.json"
-
 	policy_file="${BUILDKITE_PLUGIN_CREATE_ECR_POLICY:-''}"
 	echo "Policy file: ${policy_file}"
   if [ -z ${policy_file} ]; then
@@ -39,6 +34,11 @@ upsert_ecr() {
       --repository-name "${repository_name}" \
       --policy-text "file://${policy_file}"
   fi
+
+	echo 'Setting ECR Lifecycle policy'
+  aws ecr put-lifecycle-policy \
+    --repository-name "${repository_name}" \
+    --lifecycle-policy-text "file://$basedir/policies/ecr-lifecycle-policy.json"
 }
 
 env
