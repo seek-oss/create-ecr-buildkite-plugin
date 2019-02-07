@@ -43,7 +43,6 @@ upsert_ecr() {
 
 env
 $(aws ecr get-login --no-include-email)
-# FIX ME
 default_repository_name="build-cache/${BUILDKITE_ORGANIZATION_SLUG}/${BUILDKITE_PIPELINE_SLUG}"
 repository_name="${BUILDKITE_PLUGIN_CREATE_ECR_NAME:-${default_repository_name}}"
 upsert_ecr "${repository_name}"
