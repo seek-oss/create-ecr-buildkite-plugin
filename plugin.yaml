@@ -1,0 +1,12 @@
+name: ecr-management
+description: Plugin managing AWS ECR
+author: https://github.com/seek-oss
+requirements:
+  - docker
+configuration:
+  properties:
+    name:
+      type: string
+    policy:
+      type: string
+  required: []
