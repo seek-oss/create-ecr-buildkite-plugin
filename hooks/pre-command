@@ -26,7 +26,7 @@ upsert_ecr() {
     aws ecr create-repository --repository-name "${repository_name}"
   fi
 
-	permissions_policy_file="${BUILDKITE_PLUGIN_CREATE_ECR_PERMISSIONSPOLICY:-''}"
+	permissions_policy_file="${BUILDKITE_PLUGIN_CREATE_ECR_PERMISSIONS_POLICY:-''}"
 	echo "Policy file: ${permissions_policy_file}"
   if [ "$permissions_policy_file" != "" ]; then
 		echo 'Setting ECR permissions'
@@ -36,7 +36,7 @@ upsert_ecr() {
   fi
 
 	echo 'Setting ECR Lifecycle policy'
-  lifecycle_policy_file="${BUILDKITE_PLUGIN_CREATE_ECR_LIFECYCLEPOLICY:-''}"
+  lifecycle_policy_file="${BUILDKITE_PLUGIN_CREATE_ECR_LIFECYCLE_POLICY:-''}"
   if [ "$lifecycle_policy_file" != "" ]; then
     aws ecr put-lifecycle-policy \
     --repository-name "${repository_name}" \

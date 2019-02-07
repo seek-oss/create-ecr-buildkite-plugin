@@ -7,8 +7,8 @@ configuration:
   properties:
     name:
       type: string
-    permissionspolicy:
+    permissions-policy:
       type: string
-    lifecyclepolicy:
+    lifecycle-policy:
       type: string
   required: ["name"]
