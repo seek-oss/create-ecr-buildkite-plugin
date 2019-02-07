@@ -29,7 +29,7 @@ upsert_ecr() {
 	policy_file="${BUILDKITE_PLUGIN_CREATE_ECR_POLICY:-''}"
 	echo "Policy file: ${policy_file}"
   if [ "$policy_file" != "" ]; then
-		echo 'Setting ECR permissoins'
+		echo 'Setting ECR permissions'
     aws ecr set-repository-policy \
       --repository-name "${repository_name}" \
       --policy-text "file://${policy_file}"
