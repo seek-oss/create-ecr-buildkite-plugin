@@ -38,7 +38,7 @@ upsert_ecr() {
 	echo 'Setting ECR Lifecycle policy'
   aws ecr put-lifecycle-policy \
     --repository-name "${repository_name}" \
-    --lifecycle-policy-text "file://$basedir/policies/ecr-lifecycle-policy.json"
+    --lifecycle-policy-text "file://$basedir/policies/default-lifecycle-policy.json"
 }
 
 $(aws ecr get-login --no-include-email)
