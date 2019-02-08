@@ -7,7 +7,7 @@ configuration:
   properties:
     name:
       type: string
-    permissions-policy:
+    repository-policy:
       type: string
     lifecycle-policy:
       type: string

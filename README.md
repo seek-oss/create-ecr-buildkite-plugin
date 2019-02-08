@@ -12,7 +12,7 @@ steps:
     plugins:
       seek-oss/create-ecr:
         name: 'my-repo-name'
-        permissions-policy: 'path/to/permissions-policy.json'
+        repository-policy: 'path/to/repository-policy.json'
         lifecycle-policy: 'path/to/lifecycle-policy.json'
     command:
       - echo hi
@@ -21,7 +21,7 @@ steps:
 Params:
 
 - name (required) - name of the ECR.
-- permissions-policy (optional) - path in local repository to the permissions policy file.
+- repository-policy (optional) - path in local repository to the repository policy file.
 - lifecycle-policy (optional) - path in local repository to the lifecycle policy file.
 
 # License

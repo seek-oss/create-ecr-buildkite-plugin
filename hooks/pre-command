@@ -26,13 +26,13 @@ upsert_ecr() {
     aws ecr create-repository --repository-name "${repository_name}"
   fi
 
-  permissions_policy_file="${BUILDKITE_PLUGIN_CREATE_ECR_PERMISSIONS_POLICY:-''}"
-  echo "Policy file: ${permissions_policy_file}"
-  if [ "$permissions_policy_file" != "" ]; then
-    echo 'Setting ECR permissions'
+  repository_policy_file="${BUILDKITE_PLUGIN_CREATE_ECR_REPOSITORY_POLICY:-''}"
+  echo "Policy file: ${repository_policy_file}"
+  if [ "$repository_policy_file" != "" ]; then
+    echo 'Setting ECR repository policy'
     aws ecr set-repository-policy \
       --repository-name "${repository_name}" \
-      --policy-text "file://${permissions_policy_file}"
+      --policy-text "file://${repository_policy_file}"
   fi
 
   echo 'Setting ECR Lifecycle policy'
