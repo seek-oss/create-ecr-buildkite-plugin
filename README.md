@@ -10,9 +10,10 @@ A [Buildkite plugin](https://buildkite.com/docs/agent/v3/plugins) to create and 
 steps:
   - label: 'Main'
     plugins:
-      seek-oss/create-ecr#v1.0.10:
-        name: "my-repo-name"
-        policy: "path/to/ecr-policy.json"
+      seek-oss/create-ecr:
+        name: 'my-repo-name'
+        repository-policy: 'path/to/repository-policy.json'
+        lifecycle-policy: 'path/to/lifecycle-policy.json'
     command:
       - echo hi
 ```
@@ -20,7 +21,8 @@ steps:
 Params:
 
 - name (required) - name of the ECR.
-- policy (optional) - path in local repository to the policy file.
+- repository-policy (optional) - path in local repository to the repository policy file.
+- lifecycle-policy (optional) - path in local repository to the lifecycle policy file.
 
 # License
 
