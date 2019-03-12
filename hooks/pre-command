@@ -44,6 +44,6 @@ if [[ -z ${BUILDKITE_PLUGIN_CREATE_ECR_NAME:-} ]]; then
   exit 1
 fi
 
-repository_name="${BUILDKITE_PLUGIN_CREATE_ECR_NAME:-}"
+repository_name="${BUILDKITE_PLUGIN_CREATE_ECR_NAME}"
 
 upsert_ecr "${repository_name}"
