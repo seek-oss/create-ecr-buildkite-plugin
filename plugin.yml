@@ -1,14 +1,14 @@
-name: create-ecr
-description: Plugin managing creation of AWS ECR
+name: Create ECR
+description: Create and manage an Amazon ECR repository
 author: https://github.com/seek-oss
 requirements:
   - docker
 configuration:
   properties:
+    lifecycle-policy:
+      type: string
     name:
       type: string
     repository-policy:
       type: string
-    lifecycle-policy:
-      type: string
-  required: ["name"]
+  required: ['name']

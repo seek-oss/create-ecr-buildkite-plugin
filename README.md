@@ -1,29 +1,50 @@
-# create-ecr-buildkite-plugin
+# Create ECR Buildkite Plugin
 
-A [Buildkite plugin](https://buildkite.com/docs/agent/v3/plugins) to create and configure AWS ECR.
+[![Build Status](https://img.shields.io/github/release/seek-oss/create-ecr-buildkite-plugin.svg)](https://github.com/seek-oss/create-ecr-buildkite-plugin/releases)
 
-# Example
+A [Buildkite plugin](https://buildkite.com/docs/agent/v3/plugins) to create and
+manage an Amazon ECR repository.
 
-## Basic Usage
+## Example
 
-```yml
+The following pipeline creates an ECR repository `my-repo` if it does not
+already exist, and sets the lifecycle policy to the default
+[policies/default-lifecycle-policy.json](policies/default-lifecycle-policy.json):
+
+```yaml
 steps:
-  - label: 'Main'
+  - label: ecr
     plugins:
-      seek-oss/create-ecr:
-        name: 'my-repo-name'
-        repository-policy: 'path/to/repository-policy.json'
-        lifecycle-policy: 'path/to/lifecycle-policy.json'
-    command:
-      - echo hi
+      - seek-oss/create-ecr#v1.1.2:
+          name: my-repo
 ```
 
-Params:
+A custom lifecycle policy and repository policy may be specified:
 
-- name (required) - name of the ECR.
-- repository-policy (optional) - path in local repository to the repository policy file.
-- lifecycle-policy (optional) - path in local repository to the lifecycle policy file.
+```yaml
+steps:
+  - label: ecr
+    plugins:
+      - seek-oss/create-ecr#v1.1.2:
+          lifecycle-policy: path/to/lifecycle-policy.json
+          name: my-repo
+          repository-policy: path/to/repository-policy.json
+```
 
-# License
+## Configuration
+
+- `name` (required, string)
+
+  Name of the ECR repository.
+
+- `repository-policy` (optional, string)
+
+  Path in local repository to the repository policy file.
+
+- `lifecycle-policy` (optional, string)
+
+  Path in local repository to the lifecycle policy file.
+
+## License
 
 MIT (see [LICENSE](LICENSE))
