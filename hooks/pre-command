@@ -4,16 +4,9 @@ set -euo pipefail
 
 basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 
-get_ecr_url() {
-  local repository_name="${1}"
-  aws ecr describe-repositories \
-    --repository-names "${repository_name}" \
-    --output text \
-    --query 'repositories[0].repositoryUri'
-}
-
 ecr_exists() {
   local repository_name="${1}"
+
   aws ecr describe-repositories \
     --repository-names "${repository_name}" \
     --output text \
@@ -22,6 +15,7 @@ ecr_exists() {
 
 upsert_ecr() {
   local repository_name="${1}"
+
   if ! ecr_exists "${repository_name}"; then
     echo '--- Creating ECR repository'
     echo "Name: ${repository_name}"
@@ -45,7 +39,11 @@ upsert_ecr() {
   --lifecycle-policy-text "file://${lifecycle_policy_file}"
 }
 
-$(aws ecr get-login --no-include-email)
-default_repository_name="build-cache/${BUILDKITE_ORGANIZATION_SLUG}/${BUILDKITE_PIPELINE_SLUG}"
-repository_name="${BUILDKITE_PLUGIN_CREATE_ECR_NAME:-${default_repository_name}}"
+if [[ -z ${BUILDKITE_PLUGIN_CREATE_ECR_NAME:-} ]]; then
+  echo "'name' property is required"
+  exit 1
+fi
+
+repository_name="${BUILDKITE_PLUGIN_CREATE_ECR_NAME}"
+
 upsert_ecr "${repository_name}"
