@@ -1,6 +1,6 @@
 # Create ECR Buildkite Plugin
 
-[![Build Status](https://img.shields.io/github/release/seek-oss/create-ecr-buildkite-plugin.svg)](https://github.com/seek-oss/create-ecr-buildkite-plugin/releases)
+[![GitHub Release](https://img.shields.io/github/release/seek-oss/create-ecr-buildkite-plugin.svg)](https://github.com/seek-oss/create-ecr-buildkite-plugin/releases)
 
 A [Buildkite plugin](https://buildkite.com/docs/agent/v3/plugins) to create and
 manage an Amazon ECR repository.
