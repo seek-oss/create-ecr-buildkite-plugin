@@ -37,6 +37,10 @@ steps:
 
   Name of the ECR repository.
 
+- `scan-on-push` (optional, string)
+
+  Value to enable ECR image scan. Accepted values: true or false.
+
 - `repository-policy` (optional, string)
 
   Path in local repository to the repository policy file.
