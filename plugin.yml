@@ -9,6 +9,8 @@ configuration:
       type: string
     name:
       type: string
+    scan-on-push:
+      type: boolean
     repository-policy:
       type: string
   required: ['name']
