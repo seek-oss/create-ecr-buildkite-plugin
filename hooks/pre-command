@@ -43,7 +43,7 @@ upsert_ecr() {
     aws ecr put-image-scanning-configuration \
       --repository-name "${repository_name}" \
       --image-scanning-configuration \
-      scanOnPush=${BUILDKITE_PLUGIN_CREATE_ECR_SCAN_ON_PUSH}
+      scanOnPush="${BUILDKITE_PLUGIN_CREATE_ECR_SCAN_ON_PUSH}"
   fi
 }
 
