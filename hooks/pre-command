@@ -39,7 +39,7 @@ upsert_ecr() {
   --lifecycle-policy-text "file://${lifecycle_policy_file}"
 
   if [[ ${BUILDKITE_PLUGIN_CREATE_ECR_SCAN_ON_PUSH} ]]; then
-    echo '--- Setting ECR image scaning'
+    echo '--- Setting ECR image scanning configuration'
     aws ecr put-image-scanning-configuration \
       --repository-name ${repository_name} \
       --image-scanning-configuration \
