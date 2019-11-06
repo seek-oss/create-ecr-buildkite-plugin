@@ -10,7 +10,7 @@ configuration:
     name:
       type: string
     scan-on-push:
-      type: string
+      type: boolean
     repository-policy:
       type: string
   required: ['name']
