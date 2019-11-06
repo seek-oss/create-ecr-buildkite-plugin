@@ -39,7 +39,9 @@ steps:
 
 - `scan-on-push` (optional, string)
 
-  Value to enable ECR image scan. Accepted values: true or false.
+  Whether to [automatically scan images](https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-scanning.html#scanning-repository) pushed to the ECR repository for vulnerabilities.
+  
+  Omitting this option will leave the existing image scanning configuration untouched.
 
 - `repository-policy` (optional, string)
 
