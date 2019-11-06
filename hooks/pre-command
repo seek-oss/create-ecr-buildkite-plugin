@@ -41,7 +41,7 @@ upsert_ecr() {
   if [[ ${BUILDKITE_PLUGIN_CREATE_ECR_SCAN_ON_PUSH} ]]; then
     echo '--- Setting ECR image scanning configuration'
     aws ecr put-image-scanning-configuration \
-      --repository-name ${repository_name} \
+      --repository-name "${repository_name}" \
       --image-scanning-configuration \
       scanOnPush=${BUILDKITE_PLUGIN_CREATE_ECR_SCAN_ON_PUSH}
   fi
