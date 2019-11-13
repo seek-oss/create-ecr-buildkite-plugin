@@ -40,12 +40,18 @@ upsert_ecr() {
   --repository-name "${repository_name}" \
   --lifecycle-policy-text "file://${lifecycle_policy_file}"
 
-  if [[ "${BUILDKITE_PLUGIN_CREATE_ECR_SCAN_ON_PUSH:-}" =~ ^(true|on|1|false|off|0)$ ]]; then
-    echo '--- Setting ECR image scanning configuration'
+  if [[ "${BUILDKITE_PLUGIN_CREATE_ECR_SCAN_ON_PUSH:-}" =~ ^(true|on|1)$ ]]; then
+    echo '--- Setting ECR image scanning configuration as Enabled'
     aws ecr put-image-scanning-configuration \
       --repository-name "${repository_name}" \
       --image-scanning-configuration \
-      scanOnPush="${BUILDKITE_PLUGIN_CREATE_ECR_SCAN_ON_PUSH}"
+      scanOnPush=true
+  elif [[ "${BUILDKITE_PLUGIN_CREATE_ECR_SCAN_ON_PUSH:-}" =~ ^(false|off|0)$ ]]; then
+    echo '--- Setting ECR image scanning configuration as disabled'
+    aws ecr put-image-scanning-configuration \
+      --repository-name "${repository_name}" \
+      --image-scanning-configuration \
+      scanOnPush=false
   fi
 }
 
