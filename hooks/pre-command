@@ -13,7 +13,7 @@ ecr_exists() {
     --query 'repositories[0].registryId'
 }
 
-upsert_ecr() {
+upsert_ecr() { 
   local repository_name="${1}"
 
   if ! ecr_exists "${repository_name}"; then
@@ -37,6 +37,20 @@ upsert_ecr() {
   aws ecr put-lifecycle-policy \
   --repository-name "${repository_name}" \
   --lifecycle-policy-text "file://${lifecycle_policy_file}"
+
+  if [[ "${BUILDKITE_PLUGIN_CREATE_ECR_SCAN_ON_PUSH:-}" =~ ^(true|on|1)$ ]]; then
+    echo '--- Setting ECR image scanning configuration as enabled'
+    aws ecr put-image-scanning-configuration \
+      --repository-name "${repository_name}" \
+      --image-scanning-configuration \
+      scanOnPush=true
+  elif [[ "${BUILDKITE_PLUGIN_CREATE_ECR_SCAN_ON_PUSH:-}" =~ ^(false|off|0)$ ]]; then
+    echo '--- Setting ECR image scanning configuration as disabled'
+    aws ecr put-image-scanning-configuration \
+      --repository-name "${repository_name}" \
+      --image-scanning-configuration \
+      scanOnPush=false
+  fi
 }
 
 if [[ -z ${BUILDKITE_PLUGIN_CREATE_ECR_NAME:-} ]]; then
