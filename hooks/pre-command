@@ -13,9 +13,7 @@ ecr_exists() {
     --query 'repositories[0].registryId'
 }
 
-upsert_ecr() {
-  printenv
-  
+upsert_ecr() { 
   local repository_name="${1}"
 
   if ! ecr_exists "${repository_name}"; then
