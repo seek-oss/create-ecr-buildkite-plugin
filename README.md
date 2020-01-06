@@ -15,7 +15,7 @@ already exist, and sets the lifecycle policy to the default
 steps:
   - label: ecr
     plugins:
-      - seek-oss/create-ecr#v1.1.2:
+      - seek-oss/create-ecr#v1.2.0:
           name: my-repo
 ```
 
@@ -25,7 +25,7 @@ A custom lifecycle policy and repository policy may be specified:
 steps:
   - label: ecr
     plugins:
-      - seek-oss/create-ecr#v1.1.2:
+      - seek-oss/create-ecr#v1.2.0:
           lifecycle-policy: path/to/lifecycle-policy.json
           name: my-repo
           repository-policy: path/to/repository-policy.json
@@ -40,7 +40,6 @@ steps:
 - `scan-on-push` (optional, boolean)
 
   Whether to [automatically scan images](https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-scanning.html#scanning-repository) pushed to the ECR repository for vulnerabilities.
-  
   Omitting this option will leave the existing image scanning configuration untouched.
 
 - `repository-policy` (optional, string)
