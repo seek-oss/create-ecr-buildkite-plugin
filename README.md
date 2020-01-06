@@ -50,6 +50,10 @@ steps:
 
   Path in local repository to the lifecycle policy file.
 
+- `repository-tags` (optional, string)
+
+  Path in local repository to the ecr repository tags file.
+
 ## License
 
 MIT (see [LICENSE](LICENSE))

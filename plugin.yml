@@ -13,4 +13,6 @@ configuration:
       type: boolean
     repository-policy:
       type: string
+    repository-tags:
+      type: string
   required: ['name']
