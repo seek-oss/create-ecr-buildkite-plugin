@@ -42,9 +42,11 @@ upsert_ecr() {
   if [[ ${repository_tags_file} != '' ]]; then
     echo '--- Setting ECR repository tags'
     echo "File: ${repository_tags_file}"
+    echo "Repository Name: ${repository_name}"
     repository_arn=$(aws ecr describe-repositories --repository-names "${repository_name}" | jq '.repositories[0].repositoryArn')
+    echo "Repository Arn: ${repository_arn}"
     aws ecr tag-resource \
-      --resource-arn "${repository_arn}" \
+      --resource-arn ${repository_arn} \
       --tags "file://${repository_tags_file}"
   fi
 
