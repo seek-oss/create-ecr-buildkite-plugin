@@ -31,6 +31,17 @@ steps:
           repository-policy: path/to/repository-policy.json
 ```
 
+A custom ECR repository tags file may be specified:
+
+```yaml
+steps:
+  - label: ecr
+    plugins:
+      - seek-oss/create-ecr#v1.2.0:
+          name: my-repo
+          repository-tags-file: path/to/repository-tags-file.json
+```
+
 ## Configuration
 
 - `name` (required, string)
@@ -50,7 +61,7 @@ steps:
 
   Path in local repository to the lifecycle policy file.
 
-- `repository-tags` (optional, string)
+- `repository-tags-file` (optional, string)
 
   Path in local repository to the ecr repository tags file.
 

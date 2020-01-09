@@ -44,7 +44,7 @@ upsert_ecr() {
   --repository-name "${repository_name}" \
   --lifecycle-policy-text "file://${lifecycle_policy_file}"
 
-  repository_tags_file="${BUILDKITE_PLUGIN_CREATE_ECR_REPOSITORY_TAGS:-}"
+  repository_tags_file="${BUILDKITE_PLUGIN_CREATE_ECR_REPOSITORY_TAGS_FILE:-}"
   if [[ ${repository_tags_file} != '' ]]; then
     echo '--- Setting ECR repository tags'
     echo "File: ${repository_tags_file}"
