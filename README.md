@@ -15,7 +15,7 @@ already exist, and sets the lifecycle policy to the default
 steps:
   - label: ecr
     plugins:
-      - seek-oss/create-ecr#v1.2.0:
+      - seek-oss/create-ecr#v1.3.0:
           name: my-repo
 ```
 
@@ -25,7 +25,7 @@ A custom lifecycle policy and repository policy may be specified:
 steps:
   - label: ecr
     plugins:
-      - seek-oss/create-ecr#v1.2.0:
+      - seek-oss/create-ecr#v1.3.0:
           lifecycle-policy: path/to/lifecycle-policy.json
           name: my-repo
           repository-policy: path/to/repository-policy.json
@@ -37,7 +37,7 @@ A custom ECR repository tags file may be specified:
 steps:
   - label: ecr
     plugins:
-      - seek-oss/create-ecr#v1.2.0:
+      - seek-oss/create-ecr#v1.3.0:
           name: my-repo
           repository-tags-file: path/to/repository-tags-file.json
 ```
