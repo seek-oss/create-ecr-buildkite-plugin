@@ -31,6 +31,17 @@ steps:
           repository-policy: path/to/repository-policy.json
 ```
 
+A custom ECR repository tags file may be specified:
+
+```yaml
+steps:
+  - label: ecr
+    plugins:
+      - seek-oss/create-ecr#v1.2.0:
+          name: my-repo
+          repository-tags-file: path/to/repository-tags-file.json
+```
+
 ## Configuration
 
 - `name` (required, string)
@@ -40,7 +51,6 @@ steps:
 - `scan-on-push` (optional, boolean)
 
   Whether to [automatically scan images](https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-scanning.html#scanning-repository) pushed to the ECR repository for vulnerabilities.
-
   Omitting this option will leave the existing image scanning configuration untouched.
 
 - `repository-policy` (optional, string)
@@ -50,6 +60,10 @@ steps:
 - `lifecycle-policy` (optional, string)
 
   Path in local repository to the lifecycle policy file.
+
+- `repository-tags-file` (optional, string)
+
+  Path in local repository to the ecr repository tags file.
 
 ## License
 

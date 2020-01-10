@@ -4,6 +4,12 @@ set -euo pipefail
 
 basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 
+get_repository_arn() {
+  local repository_name="${1}"
+
+  repository_arn=$(aws ecr describe-repositories --repository-names "${repository_name}" | jq '.repositories[0].repositoryArn' -r)
+}
+
 ecr_exists() {
   local repository_name="${1}"
 
@@ -37,6 +43,18 @@ upsert_ecr() {
   aws ecr put-lifecycle-policy \
   --repository-name "${repository_name}" \
   --lifecycle-policy-text "file://${lifecycle_policy_file}"
+
+  repository_tags_file="${BUILDKITE_PLUGIN_CREATE_ECR_REPOSITORY_TAGS_FILE:-}"
+  if [[ ${repository_tags_file} != '' ]]; then
+    echo '--- Setting ECR repository tags'
+    echo "File: ${repository_tags_file}"
+    echo '--- Getting ECR repository Arn'
+    get_repository_arn "${repository_name}"
+    echo "Repository Arn: ${repository_arn}"
+    aws ecr tag-resource \
+      --resource-arn "${repository_arn}" \
+      --tags "file://${repository_tags_file}"
+  fi
 
   if [[ "${BUILDKITE_PLUGIN_CREATE_ECR_SCAN_ON_PUSH:-}" =~ ^(true|on|1)$ ]]; then
     echo '--- Setting ECR image scanning configuration as enabled'
