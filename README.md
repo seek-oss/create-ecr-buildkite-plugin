@@ -13,7 +13,8 @@ already exist, and sets the lifecycle policy to the default
 
 ```yaml
 steps:
-  - label: ecr
+  - command: echo 'use your new ECR repo here'
+    label: ecr
     plugins:
       - seek-oss/create-ecr#v1.3.0:
           name: my-repo
@@ -23,7 +24,8 @@ A custom lifecycle policy and repository policy may be specified:
 
 ```yaml
 steps:
-  - label: ecr
+  - command: echo 'use your new ECR repo here'
+    label: ecr
     plugins:
       - seek-oss/create-ecr#v1.3.0:
           lifecycle-policy: path/to/lifecycle-policy.json
@@ -35,7 +37,8 @@ A custom ECR repository tags file may be specified:
 
 ```yaml
 steps:
-  - label: ecr
+  - command: echo 'use your new ECR repo here'
+    label: ecr
     plugins:
       - seek-oss/create-ecr#v1.3.0:
           name: my-repo
@@ -64,6 +67,16 @@ steps:
 - `repository-tags-file` (optional, string)
 
   Path in local repository to the ecr repository tags file.
+
+## Troubleshooting
+
+### 🚨 Error: No command has been provided
+
+This plugin runs on a [`pre-command` hook] to allow it to be chained with other commands and plugins, like the [`docker-ecr-publish` plugin].
+You will need to specify a `command` for the step, even if it is just a simple `echo` like in the examples above.
+
+[`docker-ecr-publish` plugin]: https://github.com/seek-oss/docker-ecr-publish-buildkite-plugin
+[`pre-command` hook]: https://buildkite.com/docs/agent/v3/hooks#available-hooks
 
 ## License
 
