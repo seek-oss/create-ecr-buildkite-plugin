@@ -6,26 +6,30 @@ basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 
 get_repository_arn() {
   local repository_name="${1}"
+  local region="${2}"
 
-  repository_arn=$(aws ecr describe-repositories --repository-names "${repository_name}" | jq '.repositories[0].repositoryArn' -r)
+  repository_arn=$(aws ecr describe-repositories --repository-names "${repository_name}" --region "${region}" | jq '.repositories[0].repositoryArn' -r)
 }
 
 ecr_exists() {
   local repository_name="${1}"
+  local region="${2}"
 
   aws ecr describe-repositories \
     --repository-names "${repository_name}" \
+    --region "$region" \
     --output text \
     --query 'repositories[0].registryId'
 }
 
 upsert_ecr() { 
   local repository_name="${1}"
+  local region="${2}"
 
-  if ! ecr_exists "${repository_name}"; then
+  if ! ecr_exists "${repository_name}" "${region}"; then
     echo '--- Creating ECR repository'
     echo "Name: ${repository_name}"
-    aws ecr create-repository --repository-name "${repository_name}"
+    aws ecr create-repository --repository-name "${repository_name}" --region $region
   fi
 
   repository_policy_file="${BUILDKITE_PLUGIN_CREATE_ECR_REPOSITORY_POLICY:-}"
@@ -34,6 +38,7 @@ upsert_ecr() {
     echo "File: ${repository_policy_file}"
     aws ecr set-repository-policy \
       --repository-name "${repository_name}" \
+      --region "$region" \
       --policy-text "file://${repository_policy_file}"
   fi
 
@@ -42,6 +47,7 @@ upsert_ecr() {
   echo "File: ${lifecycle_policy_file}"
   aws ecr put-lifecycle-policy \
   --repository-name "${repository_name}" \
+  --region "$region" \
   --lifecycle-policy-text "file://${lifecycle_policy_file}"
 
   repository_tags_file="${BUILDKITE_PLUGIN_CREATE_ECR_REPOSITORY_TAGS_FILE:-}"
@@ -49,25 +55,53 @@ upsert_ecr() {
     echo '--- Setting ECR repository tags'
     echo "File: ${repository_tags_file}"
     echo '--- Getting ECR repository Arn'
-    get_repository_arn "${repository_name}"
+    get_repository_arn "${repository_name}" "${region}"
     echo "Repository Arn: ${repository_arn}"
-    aws ecr tag-resource \
-      --resource-arn "${repository_arn}" \
-      --tags "file://${repository_tags_file}"
+    aws ecr tag-resource --resource-arn "${repository_arn}" --tags "file://${repository_tags_file}" --region "${region}" 
   fi
 
   if [[ "${BUILDKITE_PLUGIN_CREATE_ECR_SCAN_ON_PUSH:-}" =~ ^(true|on|1)$ ]]; then
     echo '--- Setting ECR image scanning configuration as enabled'
     aws ecr put-image-scanning-configuration \
       --repository-name "${repository_name}" \
+      --region "$region" \
       --image-scanning-configuration \
       scanOnPush=true
   elif [[ "${BUILDKITE_PLUGIN_CREATE_ECR_SCAN_ON_PUSH:-}" =~ ^(false|off|0)$ ]]; then
     echo '--- Setting ECR image scanning configuration as disabled'
     aws ecr put-image-scanning-configuration \
       --repository-name "${repository_name}" \
+      --region "$region" \
       --image-scanning-configuration \
       scanOnPush=false
+  fi
+}
+
+upsert_to_regional_ecr() {
+  local repository_name="${1}"
+  shift
+  local regions=("$@")
+  # run a loop for each region mentioned in the list
+  for region in "${regions[@]}"; do
+    echo "--- Current region => ${region}"
+    upsert_ecr "${repository_name}" "${region}"
+  done
+}
+
+get_regions() {
+  regions=()
+
+  if [ -z "${BUILDKITE_PLUGIN_CREATE_ECR_REGIONS_0:-}" ]; then
+    echo "--- No regions mentioned. Getting current region"
+    fallback_region=$(aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].[RegionName]')
+    echo "--- Setting region to => ${fallback_region}"
+    regions+=("$fallback_region")
+  else
+    while IFS='=' read -r region _ ; do
+      if [[ $region =~ ^(BUILDKITE_PLUGIN_CREATE_ECR_REGIONS_[0-9]+) ]]; then
+        regions+=("${!region}")
+      fi
+    done < <(env | sort)
   fi
 }
 
@@ -77,5 +111,5 @@ if [[ -z ${BUILDKITE_PLUGIN_CREATE_ECR_NAME:-} ]]; then
 fi
 
 repository_name="${BUILDKITE_PLUGIN_CREATE_ECR_NAME}"
-
-upsert_ecr "${repository_name}"
+get_regions
+upsert_to_regional_ecr "${repository_name}" ${regions[@]}
