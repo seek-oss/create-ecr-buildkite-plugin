@@ -45,6 +45,20 @@ steps:
           repository-tags-file: path/to/repository-tags-file.json
 ```
 
+Multiple regions can be specified:
+
+```yaml
+steps:
+  - command: echo 'use your new ECR repo here'
+    label: ecr
+    plugins:
+      - seek-oss/create-ecr#v1.3.0:
+          name: my-repo
+          regions: 
+            - us-west-2
+            - ap-southeast-2
+```
+
 ## Configuration
 
 - `name` (required, string)
@@ -67,6 +81,10 @@ steps:
 - `repository-tags-file` (optional, string)
 
   Path in local repository to the ecr repository tags file.
+
+- `regions` (optional, array of strings)
+
+  Regions to push the images to. If not mentioned, current region is pulled from runtime config.
 
 ## Troubleshooting
 
