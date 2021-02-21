@@ -43,7 +43,6 @@ steps:
       - seek-oss/create-ecr#v1.3.0:
           name: my-repo
           repository-tags-file: path/to/repository-tags-file.json
-
 ```
 
 Multiple regions can be specified:

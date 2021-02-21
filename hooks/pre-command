@@ -93,7 +93,7 @@ get_regions() {
 
   if [ -z "${BUILDKITE_PLUGIN_CREATE_ECR_REGIONS_0:-}" ]; then
     echo "--- No regions mentioned. Getting current region"
-    fallback_region=$(aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].[RegionName]')
+    fallback_region=${AWS_DEFAULT_REGION:-$(aws configure get region)}
     echo "--- Setting region to => ${fallback_region}"
     regions+=("$fallback_region")
   else
