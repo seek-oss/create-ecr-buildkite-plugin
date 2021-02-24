@@ -75,6 +75,21 @@ upsert_ecr() {
       --image-scanning-configuration \
       scanOnPush=false
   fi
+
+
+  if [[ "${BUILDKITE_PLUGIN_CREATE_ECR_IMAGE_TAG_IMUTABLE:-}" =~ ^(true|on|1)$ ]]; then
+    echo '--- Setting ECR image tag mutability to IMMUTABLE'
+    aws ecr put-image-tag-mutability \
+      --repository-name "${repository_name}" \
+      --region "${region}" \
+      --image-tag-mutability "IMMUTABLE"
+  elif [[ "${BUILDKITE_PLUGIN_CREATE_ECR_IMAGE_TAG_IMUTABLE:-}" =~ ^(false|off|0)$ ]]; then
+    echo '--- Setting ECR image tag mutability to MUTABLE'
+    aws ecr put-image-tag-mutability \
+      --repository-name "${repository_name}" \
+      --region "${region}" \
+      --image-tag-mutability "MUTABLE"
+  fi
 }
 
 upsert_to_regional_ecr() {

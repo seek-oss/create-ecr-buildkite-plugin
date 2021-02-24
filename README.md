@@ -86,6 +86,12 @@ steps:
 
   Regions to push the images to. If not mentioned, current region is pulled from runtime config.
 
+- `image-tag-imutable` (optional, boolean)
+  
+  Whether to [allow overwriting existing image tags or not](https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-tag-mutability.html). When using `seek-oss/docker-ecr-publish`
+  you should set `add-latest-tag` to false.
+  Omitting this option will leave the mutability configuration untouched.
+
 ## Troubleshooting
 
 ### 🚨 Error: No command has been provided

@@ -15,4 +15,6 @@ configuration:
       type: string
     repository-tags-file:
       type: string
+    image-tag-imutable:
+      type: boolean
   required: ['name']
