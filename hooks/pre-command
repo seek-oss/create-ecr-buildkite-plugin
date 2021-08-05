@@ -77,18 +77,12 @@ upsert_ecr() {
   fi
 
 
-  if [[ "${BUILDKITE_PLUGIN_CREATE_ECR_IMAGE_TAG_IMUTABLE:-}" =~ ^(true|on|1)$ ]]; then
-    echo '--- Setting ECR image tag mutability to IMUTABLE'
+  if [[ -n "${BUILDKITE_PLUGIN_CREATE_ECR_IMAGE_TAG_MUTABILITY:-}" ]]; then
+    echo '--- Setting ECR image tag mutability'
     aws ecr put-image-tag-mutability \
       --repository-name "${repository_name}" \
       --region "${region}" \
-      --image-tag-mutability "IMUTABLE"
-  elif [[ "${BUILDKITE_PLUGIN_CREATE_ECR_IMAGE_TAG_IMUTABLE:-}" =~ ^(false|off|0)$ ]]; then
-    echo '--- Setting ECR image tag mutability to MUTABLE'
-    aws ecr put-image-tag-mutability \
-      --repository-name "${repository_name}" \
-      --region "${region}" \
-      --image-tag-mutability "MUTABLE"
+      --image-tag-mutability "${BUILDKITE_PLUGIN_CREATE_ECR_IMAGE_TAG_MUTABILITY}"
   fi
 }
 
