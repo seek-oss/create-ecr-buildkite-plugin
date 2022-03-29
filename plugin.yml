@@ -16,5 +16,6 @@ configuration:
     repository-tags-file:
       type: string
     image-tag-mutability:
+      type: string    
       enum: ['MUTABLE', 'IMMUTABLE']
   required: ['name']
