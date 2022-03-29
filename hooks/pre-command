@@ -27,15 +27,15 @@ upsert_ecr() {
   local region="${2}"
 
   if ! ecr_exists "${repository_name}" "${region}"; then
-    echo '--- Creating ECR repository'
-    echo "Name: ${repository_name}"
+    echo "--- [${region}] Creating ECR repository"
+    echo "[${region}] Name: ${repository_name}"
     aws ecr create-repository --repository-name "${repository_name}" --region "${region}"
   fi
 
   repository_policy_file="${BUILDKITE_PLUGIN_CREATE_ECR_REPOSITORY_POLICY:-}"
   if [[ ${repository_policy_file} != '' ]]; then
-    echo '--- Setting ECR repository policy'
-    echo "File: ${repository_policy_file}"
+    echo "--- [${region}] Setting ECR repository policy"
+    echo "[${region}] File: ${repository_policy_file}"
     aws ecr set-repository-policy \
       --repository-name "${repository_name}" \
       --region "${region}" \
@@ -43,8 +43,8 @@ upsert_ecr() {
   fi
 
   lifecycle_policy_file="${BUILDKITE_PLUGIN_CREATE_ECR_LIFECYCLE_POLICY:-"${basedir}/policies/default-lifecycle-policy.json"}"
-  echo '--- Setting ECR lifecycle policy'
-  echo "File: ${lifecycle_policy_file}"
+  echo "--- [${region}] Setting ECR lifecycle policy"
+  echo "[${region}] File: ${lifecycle_policy_file}"
   aws ecr put-lifecycle-policy \
   --repository-name "${repository_name}" \
   --region "${region}" \
@@ -52,23 +52,23 @@ upsert_ecr() {
 
   repository_tags_file="${BUILDKITE_PLUGIN_CREATE_ECR_REPOSITORY_TAGS_FILE:-}"
   if [[ ${repository_tags_file} != '' ]]; then
-    echo '--- Setting ECR repository tags'
-    echo "File: ${repository_tags_file}"
-    echo '--- Getting ECR repository Arn'
+    echo "--- [${region}] Setting ECR repository tags"
+    echo "[${region}] File: ${repository_tags_file}"
+    echo "--- [${region}] Getting ECR repository Arn"
     get_repository_arn "${repository_name}" "${region}"
     echo "Repository Arn: ${repository_arn}"
     aws ecr tag-resource --resource-arn "${repository_arn}" --tags "file://${repository_tags_file}" --region "${region}"
   fi
 
   if [[ "${BUILDKITE_PLUGIN_CREATE_ECR_SCAN_ON_PUSH:-}" =~ ^(true|on|1)$ ]]; then
-    echo '--- Setting ECR image scanning configuration as enabled'
+    echo "--- [${region}] Setting ECR image scanning configuration as enabled"
     aws ecr put-image-scanning-configuration \
       --repository-name "${repository_name}" \
       --region "${region}" \
       --image-scanning-configuration \
       scanOnPush=true
   elif [[ "${BUILDKITE_PLUGIN_CREATE_ECR_SCAN_ON_PUSH:-}" =~ ^(false|off|0)$ ]]; then
-    echo '--- Setting ECR image scanning configuration as disabled'
+    echo "--- [${region}] Setting ECR image scanning configuration as disabled"
     aws ecr put-image-scanning-configuration \
       --repository-name "${repository_name}" \
       --region "${region}" \
@@ -76,9 +76,8 @@ upsert_ecr() {
       scanOnPush=false
   fi
 
-
   if [[ -n "${BUILDKITE_PLUGIN_CREATE_ECR_IMAGE_TAG_MUTABILITY:-}" ]]; then
-    echo '--- Setting ECR image tag mutability'
+    echo "--- [${region}] Setting ECR image tag mutability"
     aws ecr put-image-tag-mutability \
       --repository-name "${repository_name}" \
       --region "${region}" \
@@ -90,10 +89,23 @@ upsert_to_regional_ecr() {
   local repository_name="${1}"
   shift
   local regions=("$@")
+  local -A tasks
   # run a loop for each region mentioned in the list
   for region in "${regions[@]}"; do
     echo "--- Current region => ${region}"
-    upsert_ecr "${repository_name}" "${region}"
+    upsert_ecr "${repository_name}" "${region}" &
+    local backgrounded_pid=$!
+    tasks[${backgrounded_pid}]="${region}"
+    echo "[${tasks[${backgrounded_pid}]}] Backgrounding task"
+  done
+  # Wait for completion
+  for pid in "${!tasks[@]}"; do
+    if ! wait "$pid"; then
+      echo "[${tasks[${pid}]}] Task failed"
+      exit
+    else
+      echo "[${tasks[${pid}]}] Task succeeded"
+    fi
   done
 }
 
@@ -118,6 +130,14 @@ if [[ -z ${BUILDKITE_PLUGIN_CREATE_ECR_NAME:-} ]]; then
   echo "'name' property is required"
   exit 1
 fi
+
+if [[ -n ${BUILDKITE_PLUGIN_CREATE_ECR_IMAGE_TAG_MUTABILITY:-} ]]; then
+  if [[ "${BUILDKITE_PLUGIN_CREATE_ECR_IMAGE_TAG_MUTABILITY}" != "MUTABLE" && "${BUILDKITE_PLUGIN_CREATE_ECR_IMAGE_TAG_MUTABILITY}" != "IMMUTABLE" ]]; then
+    echo "'image-tag-mutability' value ${BUILDKITE_PLUGIN_CREATE_ECR_IMAGE_TAG_MUTABILITY} must be one of ['MUTABLE', 'IMMUTABLE']"
+    exit 1
+  fi
+fi
+
 
 repository_name="${BUILDKITE_PLUGIN_CREATE_ECR_NAME}"
 get_regions
