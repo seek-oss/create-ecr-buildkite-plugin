@@ -75,6 +75,14 @@ upsert_ecr() {
       --image-scanning-configuration \
       scanOnPush=false
   fi
+
+  if [[ -n "${BUILDKITE_PLUGIN_CREATE_ECR_IMAGE_TAG_MUTABILITY:-}" ]]; then
+    echo "--- [${region}] Setting ECR image tag mutability"
+    aws ecr put-image-tag-mutability \
+      --repository-name "${repository_name}" \
+      --region "${region}" \
+      --image-tag-mutability "${BUILDKITE_PLUGIN_CREATE_ECR_IMAGE_TAG_MUTABILITY}"
+  fi  
 }
 
 upsert_to_regional_ecr() {
@@ -121,6 +129,13 @@ get_regions() {
 if [[ -z ${BUILDKITE_PLUGIN_CREATE_ECR_NAME:-} ]]; then
   echo "'name' property is required"
   exit 1
+fi
+
+if [[ -n ${BUILDKITE_PLUGIN_CREATE_ECR_IMAGE_TAG_MUTABILITY:-} ]]; then
+  if [[ "${BUILDKITE_PLUGIN_CREATE_ECR_IMAGE_TAG_MUTABILITY}" != "MUTABLE" && "${BUILDKITE_PLUGIN_CREATE_ECR_IMAGE_TAG_MUTABILITY}" != "IMMUTABLE" ]]; then
+    echo "'image-tag-mutability' value ${BUILDKITE_PLUGIN_CREATE_ECR_IMAGE_TAG_MUTABILITY} must be one of ['MUTABLE', 'IMMUTABLE']"
+    exit 1
+  fi
 fi
 
 repository_name="${BUILDKITE_PLUGIN_CREATE_ECR_NAME}"
