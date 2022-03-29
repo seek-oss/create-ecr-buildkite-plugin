@@ -82,7 +82,7 @@ upsert_ecr() {
       --repository-name "${repository_name}" \
       --region "${region}" \
       --image-tag-mutability "${BUILDKITE_PLUGIN_CREATE_ECR_IMAGE_TAG_MUTABILITY}"
-  fi
+  fi  
 }
 
 upsert_to_regional_ecr() {
@@ -137,7 +137,6 @@ if [[ -n ${BUILDKITE_PLUGIN_CREATE_ECR_IMAGE_TAG_MUTABILITY:-} ]]; then
     exit 1
   fi
 fi
-
 
 repository_name="${BUILDKITE_PLUGIN_CREATE_ECR_NAME}"
 get_regions
