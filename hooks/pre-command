@@ -82,7 +82,7 @@ upsert_ecr() {
       --repository-name "${repository_name}" \
       --region "${region}" \
       --image-tag-mutability "${BUILDKITE_PLUGIN_CREATE_ECR_IMAGE_TAG_MUTABILITY}"
-  fi  
+  fi
 }
 
 upsert_to_regional_ecr() {
@@ -102,11 +102,13 @@ upsert_to_regional_ecr() {
   for pid in "${!tasks[@]}"; do
     if ! wait "$pid"; then
       echo "[${tasks[${pid}]}] Task failed"
-      exit
+      exit 1
     else
       echo "[${tasks[${pid}]}] Task succeeded"
     fi
   done
+
+  echo "--- All tasks completed successfully"
 }
 
 get_regions() {
