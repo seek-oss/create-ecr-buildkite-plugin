@@ -16,7 +16,7 @@ steps:
   - command: echo 'use your new ECR repo here'
     label: ecr
     plugins:
-      - seek-oss/create-ecr#v1.4.0:
+      - seek-oss/create-ecr#v2.0.0:
           name: my-repo
 ```
 
@@ -27,7 +27,7 @@ steps:
   - command: echo 'use your new ECR repo here'
     label: ecr
     plugins:
-      - seek-oss/create-ecr#v1.4.0:
+      - seek-oss/create-ecr#v2.0.0:
           lifecycle-policy: path/to/lifecycle-policy.json
           name: my-repo
           repository-policy: path/to/repository-policy.json
@@ -40,7 +40,7 @@ steps:
   - command: echo 'use your new ECR repo here'
     label: ecr
     plugins:
-      - seek-oss/create-ecr#v1.4.0:
+      - seek-oss/create-ecr#v2.0.0:
           name: my-repo
           repository-tags-file: path/to/repository-tags-file.json
 ```
@@ -52,7 +52,7 @@ steps:
   - command: echo 'use your new ECR repo here'
     label: ecr
     plugins:
-      - seek-oss/create-ecr#v1.4.0:
+      - seek-oss/create-ecr#v2.0.0:
           name: my-repo
           regions:
             - us-west-2
